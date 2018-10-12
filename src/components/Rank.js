@@ -2,7 +2,14 @@ import React from 'react';
 
 const Rank = () => {
 	return(
-		<p>test</p>
+		<div>
+			<div className='white f3'>
+				{'Nex, your current rank is...'}
+			</div>
+			<div className='white f2'>
+				{'#5'}
+			</div>
+		</div>
 		)
 }
 
