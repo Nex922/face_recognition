@@ -6,7 +6,7 @@ import ImageLinkForm from './components/ImageLinkForm'
 import Rank from './components/Rank';
 import Particles from 'react-particles-js';
 import Clarifai from 'clarifai';
-import FaceRecoginition from './components/FaceRecoginition';
+import FaceRecognition from './components/FaceRecognition';
 
 const app = new Clarifai.App({
  apiKey: '5989e403d6bd4e1c9a0174e618d951ab'
@@ -29,22 +29,42 @@ class App extends Component {
     super();
     this.state = {
       input: '',
+      imageUrl: '',
+      box: [],
     }
+  }
+
+  calculateFaceLocation = (data) => {
+    const clarifaiFaces = data.outputs[0].data.regions;
+    const image = document.getElementById('inputImage');
+    const width = Number(image.width);
+    const height = Number(image.height);
+    return (clarifaiFaces.map((face, i) => {
+      face = clarifaiFaces[i].region_info.bounding_box;
+      return {
+        leftCol: face.left_col * width,
+        topRow: face.top_row * height,
+        rightCol: width - (face.right_col * width),
+        bottomRow: height - (face.bottom_row * height)
+      }
+    }))
+  }
+
+  displayFaceBox = (box) => {
+    this.setState({'box': box});
   }
 
   onInputChange = (event) => {
-    console.log(event.target.value);
+    this.setState({input: event.target.value});
   }
 
   onButtonSubmit = () => {
-    app.models.predict("a403429f2ddf4b49b307e318f00e528b", "https://samples.clarifai.com/face-det.jpg").then(
-    function(response) {
-      console.log(response);
-    },
-    function(err) {
-      // there was an error
-    }
-  );
+    this.setState({imageUrl: this.state.input});
+    app.models.predict(
+      Clarifai.FACE_DETECT_MODEL,
+      this.state.input)
+    .then(response => this.displayFaceBox(this.calculateFaceLocation(response)))
+    .catch(err => console.log(err))
   }
 
   render() {
@@ -57,23 +77,11 @@ class App extends Component {
         <Logo />
         <Rank />
         <ImageLinkForm onInputChange={this.onInputChange} onButtonSubmit={this.onButtonSubmit} />
-        <FaceRecoginition />
+        <FaceRecognition boxes={this.state.box} imageUrl={this.state.imageUrl}/>
       </div>
     );
   }
 }
 
-//API FIX
-/*app.models
-.predict(
-Clarifai.COLOR_MODEL,
-    // URL
-    "https://samples.clarifai.com/metro-north.jpg"
-)
-.then(function(response) {
-    // do something with responseconsole.log(response);
-    },
-    function(err) {// there was an error}
-);*/
 
 export default App;
