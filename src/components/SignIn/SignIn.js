@@ -34,6 +34,7 @@ class SignIn extends Component {
 			throw new Error('Nieprawidłowy login lub hasło.');
 		})
 		.then(data => {
+			this.props.loadUser(data);
 			this.props.onRouteChange('home');
 		}).catch(err => {
 			console.log(err);
