@@ -38,6 +38,7 @@ class App extends Component {
     }
   }
 
+
   calculateFaceLocation = (data) => {
     const clarifaiFaces = data.outputs[0].data.regions;
     const image = document.getElementById('inputImage');

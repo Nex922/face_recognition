@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "clarifai": "^2.8.1",
+    "cors": "^2.8.4",
     "live-server": "^1.2.0",
     "react": "^16.5.2",
     "react-dom": "^16.5.2",
@@ -13,7 +14,7 @@
     "tachyons": "^4.11.1"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "react-scripts start live-server",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
